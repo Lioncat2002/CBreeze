@@ -4,6 +4,23 @@
 
 #define BREEZE_TOMLFILE "breeze.toml"
 
+
+
+void python3_cmd(std::map<std::string, std::string> dependencies){
+
+    for(const auto& deps : dependencies)
+    {
+        std::cout<<"Installing: "+deps.first+"=="+deps.second<<std::endl;
+
+        const std::string command="pip3 install "+deps.first+"=="+deps.second;
+
+        const char* b=command.c_str();
+
+        system(b);
+    }
+
+}
+
 auto read_toml(std::string filename){
     std::ifstream ifs(filename, std::ios::binary);
     assert(ifs.good());
@@ -18,15 +35,9 @@ int main()
     const auto title = toml::find<std::string>(data, "title");
     std::cout << "the title is: " << title << std::endl;
 
-    const auto tab = toml::find<std::map<std::string, std::string>>(data, "tab");
+    const auto dependencies = toml::find<std::map<std::string, std::string>>(data, "dependencies");
 
-    for(const auto& elem : tab)
-    {
-        std::cout<<"Installing: "+elem.first+"=="+elem.second<<std::endl;
-        const std::string command="pip3 install "+elem.first+"=="+elem.second;
-        const char* b=command.c_str();
-        system(b);
-    }
+    python3_cmd(dependencies);
     
     return 0;
 }

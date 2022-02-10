@@ -2,5 +2,5 @@ title = "an example toml file"
 python="3"
 
 
-[tab]
+[dependencies]
 pylcanim="0.0.7"
