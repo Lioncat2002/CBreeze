@@ -93,11 +93,5 @@ int main(int argc, char** argv)
         std::cout<<"use \"help\" command for how to use"<<std::endl;
     }
     
-    
-
-    //const toml::value d{{"pussy",{{"qux","hello pussy wussy"}}}};
-
-    //std::cout << std::setw(0)<<d<< std::endl;
-    
     return 0;
 }
