@@ -28,11 +28,16 @@ auto read_toml(std::string filename){
     return data;
 }
 
-void create_env(toml::value data){
+void create_env(std::string title){
 
-    const auto project_title=toml::find<std::string>(data, "title");
-    const std::string command="python3 -m venv "+project_title;
-
+    
+    std::string command="python3 -m venv "+title;
+    const char* b=command.c_str();
+    system(b);
+    //command="source /bin/activate";
+    //std::cout<<command<<std::endl;
+    //const char* b1=command.c_str();
+    //system(b1);
 }
 
 void install_dependencies(toml::value data){
@@ -46,20 +51,23 @@ void write_data(toml::value data){
     breezefile.open("test.toml");
 
     breezefile<<std::setw(0)<<data<<std::endl;
+    breezefile<<std::setw(0)<<"[dependencies]"<<std::endl;
     breezefile.close();
 
 }
+
 int main(int argc, char** argv)
 {
      
-    //const auto data=read_toml(BREEZE_TOMLFILE);
-    //install_dependencies(data);
-    //const auto title = toml::find<std::string>(data, "title");
-    //std::cout << "the title is: " << title << std::endl;
-    //std::cout<<"What is the title of your project? ";
+    
     std::string command="Some_random_project";
+   
+    
     if(argc>=2){
         command=argv[1];
+    }
+    else{
+        std::cout<<"Error";
     }
     
     if(command=="init"){
@@ -67,14 +75,22 @@ int main(int argc, char** argv)
         std::cout<<"Initializing "+command<<std::endl;
         
             std::string title=argv[2];
-            toml::value d{
-                {"python","3"},
-                {"repository",""},
-                {"author",""},
-                {"title",title}
+            toml::value d
+            {
+               {
+                   "config",{
+                    {"python","3"},
+                    {"repository",""},
+                    {"author",""},
+                    {"title",title}
+                },
+                
+               } 
+                
                 };
             write_data(d);
-        
+        create_env(title);
+        std::cout<<"Environment created and activated successfully"<<std::endl;
         
 
     }
