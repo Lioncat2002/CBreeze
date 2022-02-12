@@ -2,7 +2,8 @@
 #include <iostream>
 #include <map>
 #include <fstream>
-#define BREEZE_TOMLFILE "test.toml"
+#include <filesystem>
+#define BREEZE_TOMLFILE "breeze.toml"
 
 
 
@@ -30,25 +31,29 @@ auto read_toml(std::string filename){
 
 void create_env(std::string title){
 
-    
-    std::string command="python3 -m venv "+title;
+    std::filesystem::create_directories("./"+title+"/");
+    std::string command="python3 -m venv "+title+"/"+title;
     const char* b=command.c_str();
     system(b);
-    //command="source /bin/activate";
-    //std::cout<<command<<std::endl;
-    //const char* b1=command.c_str();
-    //system(b1);
+    
 }
 
 void install_dependencies(toml::value data){
     
     const auto dependencies = toml::find<std::map<std::string, std::string>>(data, "dependencies");
+    const auto& config=toml::find(data, "config");
+    std::string title=toml::find<std::string>(config,"title");
+
+    std::cout<<title<<std::endl;
+    
     python3_cmd(dependencies);
 
 }
-void write_data(toml::value data){
+void write_data(toml::value data,std::string dir_name){
     std::ofstream breezefile;
-    breezefile.open("test.toml");
+    //std::cout<<data["title"]<<std::endl;
+    std::filesystem::create_directories("./"+dir_name+"/");
+    breezefile.open(dir_name+"/"+BREEZE_TOMLFILE);
 
     breezefile<<std::setw(0)<<data<<std::endl;
     breezefile<<std::setw(0)<<"[dependencies]"<<std::endl;
@@ -72,7 +77,7 @@ int main(int argc, char** argv)
     
     if(command=="init"){
         
-        std::cout<<"Initializing "+command<<std::endl;
+        std::cout<<"Initializing project"<<std::endl;
         
             std::string title=argv[2];
             toml::value d
@@ -88,7 +93,7 @@ int main(int argc, char** argv)
                } 
                 
                 };
-            write_data(d);
+            write_data(d,title);
         create_env(title);
         std::cout<<"Environment created and activated successfully"<<std::endl;
         
